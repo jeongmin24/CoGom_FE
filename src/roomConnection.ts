@@ -26,7 +26,7 @@ function isTodo(value: unknown): value is CompletedTodo {
 }
 
 /** One mounted room owns the socket. Every reconnect starts from an authoritative snapshot. */
-export function connectRoom(name: string) {
+export function connectRoom(name: string, { liveOnly = false } = {}) {
   let socket: WebSocket | null = null;
   let disposed = false;
   let reconnectTimer = 0;
@@ -122,13 +122,23 @@ export function connectRoom(name: string) {
       discardMovement();
       const wasOnline = receivedWelcome;
       receivedWelcome = false;
-      useRoomStore.getState().setConnection('demo');
-      if (wasOnline) useRoomStore.getState().notify('연결이 끊겨 로컬 미리보기로 전환했어요.');
+      if (liveOnly) {
+        clearLiveRoom();
+        if (wasOnline) useRoomStore.getState().notify('연결이 끊겼어요. 다시 연결하는 중이에요.');
+      } else {
+        useRoomStore.getState().setConnection('demo');
+        if (wasOnline) useRoomStore.getState().notify('연결이 끊겨 로컬 미리보기로 전환했어요.');
+      }
       const delay = Math.min(15000, 1500 * 2 ** attempts++);
       reconnectTimer = window.setTimeout(connect, delay);
     };
   }
 
+  function clearLiveRoom() {
+    useRoomStore.setState({ players: [], todos: [], myId: '', connection: 'connecting', serverOffsetMs: 0, now: Date.now() });
+  }
+
+  if (liveOnly) clearLiveRoom();
   bindRoomTransport(send);
   connect();
   return () => {

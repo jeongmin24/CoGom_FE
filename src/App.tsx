@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import {
   ArrowRight, Bell, Check, CheckCheck, ChevronRight, Coffee, DoorOpen,
@@ -40,6 +40,7 @@ export function App({ account, onExit }: { account?: AuthUser; onExit: () => voi
   });
   const [activeSection, setActiveSection] = useState('cafe');
   const cleanup = useRef<(() => void) | null>(null);
+  const accountNickname = account?.nickname;
   const me = players.find(player => player.id === myId);
   const seconds = me ? remainingSeconds(me, now) : FOCUS_SECONDS;
   const time = String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
@@ -50,6 +51,17 @@ export function App({ account, onExit }: { account?: AuthUser; onExit: () => voi
   const today = new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' }).format(now);
 
   useEffect(() => { setRoomSoundEnabled(sound); }, [sound]);
+  useLayoutEffect(() => {
+    if (accountNickname) {
+      cleanup.current = connectRoom(accountNickname, { liveOnly: true });
+      setJoinedName(accountNickname);
+    }
+    return () => {
+      cleanup.current?.();
+      cleanup.current = null;
+      resetRoom();
+    };
+  }, [accountNickname]);
   useEffect(() => {
     try { localStorage.setItem('cogom-sidebar-collapsed', String(sidebarCollapsed)); } catch { /* private storage may be disabled */ }
   }, [sidebarCollapsed]);
@@ -65,8 +77,6 @@ export function App({ account, onExit }: { account?: AuthUser; onExit: () => voi
     return () => {
       clearInterval(timer);
       window.removeEventListener('keydown', preventPageScroll);
-      cleanup.current?.();
-      resetRoom();
     };
   }, []);
 
@@ -83,7 +93,7 @@ export function App({ account, onExit }: { account?: AuthUser; onExit: () => voi
     if (!name) return;
     unlockRoomAudio();
     cleanup.current?.();
-    cleanup.current = connectRoom(name);
+    cleanup.current = connectRoom(name, { liveOnly: !!account });
     setJoinedName(name);
     setJoinOpen(false);
   }
