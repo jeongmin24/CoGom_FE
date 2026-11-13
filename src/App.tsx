@@ -2,20 +2,18 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import {
   ArrowRight, Bell, Check, CheckCheck, ChevronRight, Coffee, DoorOpen,
-  LayoutDashboard, Leaf, LockKeyhole, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, Pause, Play, RotateCcw, Sparkles,
+  LayoutDashboard, Leaf, LockKeyhole, LogIn, LogOut, Maximize2, Minimize2, PanelLeftClose, PanelLeftOpen, Pause, Play, RotateCcw, Sparkles,
   StickyNote, Timer, Users, Volume2, VolumeX, X,
 } from 'lucide-react';
 import { StudyRoom } from './StudyRoom';
 import { MovementPad } from './MovementPad';
 import { JoinDialog } from './JoinDialog';
 import { connectRoom } from './roomConnection';
-import { FOCUS_SECONDS, remainingSeconds, useRoomStore, WAKE_DISTANCE } from './roomStore';
+import { FOCUS_SECONDS, remainingSeconds, resetRoom, useRoomStore, WAKE_DISTANCE } from './roomStore';
 import { playWakeSound, setRoomSoundEnabled, unlockRoomAudio } from './roomAudio';
 import { useRoomFullscreen } from './useRoomFullscreen';
-
-function BearMark({ className = '' }: { className?: string }) {
-  return <span className={'logo-bear ' + className} aria-hidden="true"><i /><i /><b /></span>;
-}
+import { BearMark } from './BearMark';
+import type { AuthUser } from './authApi';
 
 const navigation = [
   { id: 'cafe', label: '스터디 카페', icon: LayoutDashboard },
@@ -24,7 +22,7 @@ const navigation = [
   { id: 'notes', label: '작은 성취들', icon: StickyNote },
 ] as const;
 
-export function App() {
+export function App({ account, onExit }: { account?: AuthUser; onExit: () => void }) {
   const players = useRoomStore(state => state.players);
   const myId = useRoomStore(state => state.myId);
   const todos = useRoomStore(state => state.todos);
@@ -33,7 +31,7 @@ export function App() {
   const toast = useRoomStore(state => state.toast);
   const [sound, setSound] = useState(true);
   const [joinOpen, setJoinOpen] = useState(false);
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState(account?.nickname ?? '');
   const [todo, setTodo] = useState('');
   const [joinedName, setJoinedName] = useState<string | null>(null);
   const { roomRef, fullscreen: focusView, toggleFullscreen, exitFullscreen } = useRoomFullscreen();
@@ -68,6 +66,7 @@ export function App() {
       clearInterval(timer);
       window.removeEventListener('keydown', preventPageScroll);
       cleanup.current?.();
+      resetRoom();
     };
   }, []);
 
@@ -107,7 +106,7 @@ export function App() {
         onClick={() => { setActiveSection(id); if (id !== 'cafe') void exitFullscreen(); }}
       ><Icon size={18} strokeWidth={1.7} /><span>{label}</span>{id === 'cafe' && <span className="nav-count">01</span>}</a>)}</nav>
       <div className="sidebar-note"><span className="tape" /><BearMark className="note-bear" /><p>혼자여도,<br />함께니까.</p><span className="handwritten">a little focus, together.</span></div>
-      <div className="sidebar-profile"><span className="profile-avatar"><BearMark /></span><div><strong>{me?.name === '나' ? '오늘의 나' : me?.name || '오늘의 나'}</strong><span>{connection === 'online' ? '카페에 함께 있어요' : '천천히 시작해 볼까요?'}</span></div><Leaf size={16} /></div>
+      <div className="sidebar-profile"><span className="profile-avatar"><BearMark /></span><div><strong>{connection === 'online' && me ? me.name : account?.nickname ?? '오늘의 나'}</strong><span>{connection === 'online' ? '카페에 함께 있어요' : '천천히 시작해 볼까요?'}</span></div><Leaf size={16} /></div>
     </aside>
 
     <div className="main-shell">
@@ -115,6 +114,7 @@ export function App() {
         <span className="today-date">{today}</span>
         <button className="icon-button sound-button" title="발걸음 · 노크 · 알림 소리" aria-label={sound ? '공간 소리 끄기' : '공간 소리 켜기'} aria-pressed={sound} onClick={() => { setRoomSoundEnabled(!sound); if (!sound) unlockRoomAudio(); setSound(!sound); }}>{sound ? <Volume2 size={18} /> : <VolumeX size={18} />}</button>
         <button className="join-button" onClick={() => setJoinOpen(true)}><DoorOpen size={16} /><span>{joinedName ? '다시 입장' : '실시간 입장'}</span></button>
+        <button className="icon-button" type="button" aria-label={account ? '로그아웃' : '로그인'} title={account ? '로그아웃' : '로그인'} onClick={onExit}>{account ? <LogOut size={16} /> : <LogIn size={16} />}</button>
       </div></header>
 
       <main id="dashboard">

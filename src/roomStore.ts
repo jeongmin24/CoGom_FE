@@ -93,12 +93,32 @@ interface RoomState {
   tick: () => void;
 }
 
-const initialNow = Date.now();
-const initialPlayers: Player[] = [
-  { id: 'demo-me', name: '나', position: [-3, 0], rotation: 0, status: 'resting', remainingSeconds: FOCUS_SECONDS, endsAt: null, seatIndex: 0, studyStyle: 'typing', styleChangedAt: initialNow, knockUntil: null, jumpStartedAt: null },
-  { id: 'demo-yujin', name: '유진', position: [0, 0], rotation: 0, status: 'studying', remainingSeconds: 1188, endsAt: initialNow + 1188_000, seatIndex: 1, studyStyle: 'headphones', styleChangedAt: initialNow, knockUntil: null, jumpStartedAt: null },
-  { id: 'demo-minseo', name: '민서', position: [3, 0], rotation: 0, status: 'resting', remainingSeconds: FOCUS_SECONDS, endsAt: null, seatIndex: 2, studyStyle: 'reading', styleChangedAt: initialNow, knockUntil: null, jumpStartedAt: null },
-];
+function createDemoRoom(): Pick<RoomState, 'players' | 'todos' | 'myId' | 'connection' | 'now' | 'serverOffsetMs' | 'toast'> {
+  const now = Date.now();
+  return {
+    players: [
+      { id: 'demo-me', name: '나', position: [-3, 0], rotation: 0, status: 'resting', remainingSeconds: FOCUS_SECONDS, endsAt: null, seatIndex: 0, studyStyle: 'typing', styleChangedAt: now, knockUntil: null, jumpStartedAt: null },
+      { id: 'demo-yujin', name: '유진', position: [0, 0], rotation: 0, status: 'studying', remainingSeconds: 1188, endsAt: now + 1188_000, seatIndex: 1, studyStyle: 'headphones', styleChangedAt: now, knockUntil: null, jumpStartedAt: null },
+      { id: 'demo-minseo', name: '민서', position: [3, 0], rotation: 0, status: 'resting', remainingSeconds: FOCUS_SECONDS, endsAt: null, seatIndex: 2, studyStyle: 'reading', styleChangedAt: now, knockUntil: null, jumpStartedAt: null },
+    ],
+    todos: [
+      { id: 'sample-1', text: '로그인 화면 완성!', authorName: '유진', completedAt: now },
+      { id: 'sample-2', text: '오늘도 한 걸음', authorName: '민서', completedAt: now },
+      { id: 'sample-3', text: '알고리즘 2문제 해결', authorName: '유진', completedAt: now },
+    ],
+    myId: 'demo-me',
+    connection: 'demo',
+    now,
+    serverOffsetMs: 0,
+    toast: null,
+  };
+}
+
+export function resetRoom() {
+  wakeCooldowns.clear();
+  lastMoveAt = 0;
+  useRoomStore.setState(createDemoRoom());
+}
 
 function updateTimer(status: PlayerStatus, seconds: number) {
   const state = useRoomStore.getState();
@@ -125,17 +145,7 @@ function updateTimer(status: PlayerStatus, seconds: number) {
 }
 
 export const useRoomStore = create<RoomState>((set, get) => ({
-  players: initialPlayers,
-  todos: [
-    { id: 'sample-1', text: '로그인 화면 완성!', authorName: '유진', completedAt: Date.now() },
-    { id: 'sample-2', text: '오늘도 한 걸음', authorName: '민서', completedAt: Date.now() },
-    { id: 'sample-3', text: '알고리즘 2문제 해결', authorName: '유진', completedAt: Date.now() },
-  ],
-  myId: 'demo-me',
-  connection: 'demo',
-  now: Date.now(),
-  serverOffsetMs: 0,
-  toast: null,
+  ...createDemoRoom(),
   startTimer() {
     const me = get().players.find(player => player.id === get().myId);
     if (!me || me.status === 'studying') return;
