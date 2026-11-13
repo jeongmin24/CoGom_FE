@@ -58,22 +58,51 @@ npm run build
 
 ## 소스 구성
 
-| 파일 | 역할 |
-| --- | --- |
-| `src/App.tsx` | 대시보드, 사이드바 저장, 타이머, 참가자 목록, 완료 입력과 토스트 |
-| `src/StudyRoom.tsx` | Canvas, 조명, 카페 공간, 포스트잇, 방향키 이동 |
-| `src/RoomCamera.tsx` | 카메라 확대·축소, 내 곰돌이 근접 보기와 전체 시점 복원 |
-| `src/useRoomFullscreen.ts` | 전체 화면 진입·복귀, Esc와 브라우저 대체 화면 처리 |
-| `src/BearAvatar.tsx` | 모델 로드, 착석·이동 표현, 믹서 재생과 캐릭터 클릭 |
-| `src/bearAnimations.ts` | 모델 복제, 부품 회전 중심과 공부·휴식·노크 클립 생성 |
-| `src/BearStudyProps.tsx` | 연필, 헤드폰, 책, 키보드와 생각·노크 표시 |
-| `src/FloorEffects.tsx` | 발자국·파장 효과, 이동과 노크에 따른 소리 호출 |
-| `src/roomAudio.ts` | 나무 발걸음, 노크, 알림음 합성과 전체 음소거 |
-| `src/MovementPad.tsx` | 방향키·화살표 버튼 입력과 이동 잠금 |
-| `src/roomMovement.ts` | 방 경계와 테이블·카운터 충돌 처리 |
-| `src/JoinDialog.tsx` | 닉네임 입장창과 키보드 포커스 관리 |
-| `src/roomStore.ts` | 참가자, 좌석, 타이머, 공부 스타일, 완료한 일과 노크 상태 |
-| `src/roomConnection.ts` | WebSocket 연결, 재연결, 스냅샷 검증과 이동 전송 순서 관리 |
-| `src/styles.css` | 카페 UI와 반응형 레이아웃 |
-| `vite.config.ts` | 개발 서버와 HTTP·WebSocket 프록시 |
+~~~text
+src/
+├── app/
+│   ├── main.tsx
+│   ├── App.tsx
+│   └── styles.css
+├── features/
+│   ├── auth/
+│   │   ├── AuthPage.tsx
+│   │   ├── apiClient.ts
+│   │   ├── authApi.ts
+│   │   └── auth.css
+│   ├── post-its/
+│   │   ├── PostItsPanel.tsx
+│   │   └── postIts.css
+│   └── study-room/
+│       ├── BearAvatar.tsx
+│       ├── BearStudyProps.tsx
+│       ├── CompanionsPanel.tsx
+│       ├── FloorEffects.tsx
+│       ├── FocusPanel.tsx
+│       ├── JoinDialog.tsx
+│       ├── MovementPad.tsx
+│       ├── RoomCamera.tsx
+│       ├── RoomPanel.tsx
+│       ├── RoomToast.tsx
+│       ├── StudyRoom.tsx
+│       ├── bearAnimations.ts
+│       ├── roomAudio.ts
+│       ├── roomConnection.ts
+│       ├── roomMovement.ts
+│       ├── roomStore.ts
+│       ├── studyRoom.css
+│       ├── useFocusTimer.ts
+│       ├── useRoomFullscreen.ts
+│       ├── useRoomSession.ts
+│       └── useRoomSound.ts
+├── shared/
+│   ├── BearMark.tsx
+│   ├── apiBase.ts
+│   └── bearMark.css
+└── vite-env.d.ts
+~~~
+
+- `app/`은 진입점, 화면 전환, 대시보드 배치, 공통 화면 스타일을 관리합니다.
+- `features/`는 각 기능의 UI, 스타일, API와 훅을 함께 둡니다. `useRoomSession`은 입장과 연결 종료를, `useFocusTimer`는 집중 타이머 표시와 조작을, `useRoomSound`와 `RoomToast`는 오디오와 알림을 담당합니다. `PostItsPanel`은 입력과 목록을 관리하며 WebSocket으로 동기화되는 방의 포스트잇 상태와 등록 동작을 사용합니다.
+- `shared/`에는 인증과 스터디룸에서 함께 쓰는 곰 마크와 백엔드 주소 유틸을 둡니다. 개발 서버 및 HTTP·WebSocket 프록시는 루트의 `vite.config.ts`에서 설정합니다.
 

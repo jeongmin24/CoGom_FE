@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AuthPage } from './AuthPage';
-import type { AuthSession } from './authApi';
+import { AuthPage } from '../features/auth/AuthPage';
+import type { AuthSession } from '../features/auth/authApi';
 import './styles.css';
 
 const Cafe = lazy(async () => ({ default: (await import('./App')).App }));

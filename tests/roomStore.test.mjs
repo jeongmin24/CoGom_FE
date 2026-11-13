@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import {
   bindRoomTransport, FOCUS_SECONDS, isJumping, isKnocking, JUMP_DURATION_MS, KNOCK_DURATION_MS,
   SEAT_POSITIONS, STUDY_STYLES, STUDY_STYLE_INTERVAL_MS, useRoomStore,
-} from '../src/roomStore.ts';
+} from '../src/features/study-room/roomStore.ts';
 
 let fixtureId = 0;
 function setup(t, { connection = 'demo', offset = 0 } = {}) {

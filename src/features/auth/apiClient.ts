@@ -1,4 +1,4 @@
-import { apiUrl } from './apiBase';
+import { apiUrl } from '../../shared/apiBase';
 
 export const apiClient = {
   post(path: string, options: RequestInit): Promise<Response> {

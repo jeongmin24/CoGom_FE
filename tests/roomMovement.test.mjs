@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveRoomMovement } from '../src/roomMovement.ts';
+import { resolveRoomMovement } from '../src/features/study-room/roomMovement.ts';
 
 function outsideTables(position) {
   for (const x of [-3, 0, 3]) {

@@ -1,0 +1,29 @@
+.done-section .panel-heading > svg { color: #849372; }
+.done-section { padding-bottom: 16px; }
+.done-section .panel-heading { padding-bottom: 8px; }
+.done-section > .section-description { padding: 0 20px; margin: 0; }
+.done-section form { display: flex; gap: 8px; margin: 14px 20px 18px; }
+.done-section form input { flex: 1; }
+.done-section .complete-button { padding: 8px 12px; min-height: 38px; font-size: 10px; white-space: nowrap; }
+.sticky-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; padding: 0 20px; }
+.sticky { position: relative; display: flex; flex-direction: column; min-height: 115px; padding: 12px; background: #faf0c5; border: 1px solid #e1d5a4; box-shadow: 2px 3px #6d713410; transform: rotate(-1deg); }
+.sticky-1 { background: #e9efdf; border-color: #cedbbc; transform: rotate(1.5deg); }
+.sticky-2 { background: #f2e8ec; border-color: #e4d2da; transform: rotate(-1deg); }
+.note-check { width: 17px; height: 17px; display: grid; place-items: center; border: 1px solid #b4b98d; border-radius: 50%; color: #9fa671; margin-bottom: 8px; }
+.sticky p { font-size: 12px; line-height: 1.7; color: #60684d; overflow-wrap: anywhere; }
+.note-author { display: block; margin-top: auto; padding-top: 12px; text-align: right; font-size: 9px; color: #a4ad92; overflow-wrap: anywhere; }
+.notes-caption { display: block; margin: 16px 20px 0; font-size: 15px; color: #a0aa91; text-align: right; }
+.empty-notes { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 25px 20px; color: #a0ad8f; font-size: 11px; line-height: 1.8; }
+
+@media (max-width: 640px) {
+  .done-section > .section-description { padding: 0 16px; }
+  .done-section form { margin: 14px 16px 18px; flex-direction: column; }
+  .done-section .complete-button { min-height: 40px; }
+  .sticky-list { grid-template-columns: minmax(0,1fr); padding: 0 16px; gap: 11px; }
+  .sticky { min-height: 96px; padding: 13px 16px; transform: rotate(-.5deg); }
+  .sticky-1 { transform: rotate(.5deg); }
+  .sticky p { font-size: 12px; }
+  .note-check { position: absolute; top: 15px; left: 14px; }
+  .sticky p { padding-left: 24px; }
+  .notes-caption { margin-right: 16px; font-size: 13px; }
+}

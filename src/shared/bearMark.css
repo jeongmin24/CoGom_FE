@@ -1,0 +1,7 @@
+.logo-bear { position: relative; display: inline-block; width: 31px; height: 28px; flex-shrink: 0; border: 1.7px solid var(--ink); border-radius: 44% 45% 42% 43%; background: #e7dfc8; isolation: isolate; }
+.logo-bear::before, .logo-bear::after { content: ''; position: absolute; top: -7px; width: 12px; height: 12px; border: 1.7px solid var(--ink); background: inherit; border-radius: 50%; z-index: -1; }
+.logo-bear::before { left: -2px; }
+.logo-bear::after { right: -2px; }
+.logo-bear i { position: absolute; width: 3px; height: 4px; background: var(--ink); border-radius: 50%; top: 9px; left: 7px; }
+.logo-bear i + i { left: 19px; }
+.logo-bear b { position: absolute; top: 15px; left: 12px; width: 5px; height: 4px; border-bottom: 1.5px solid var(--ink); border-radius: 50%; }

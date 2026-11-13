@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { ArrowRight, CircleAlert, Coffee, Eye, EyeOff, LockKeyhole, Mail, UserRound } from 'lucide-react';
 import { apiClient } from './apiClient';
-import { BearMark } from './BearMark';
+import { BearMark } from '../../shared/BearMark';
 import { authJsonRequest, readLoginResponse, readSignupResponse, type AuthSession } from './authApi';
 import './auth.css';
 

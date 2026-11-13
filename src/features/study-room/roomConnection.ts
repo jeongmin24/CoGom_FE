@@ -1,4 +1,4 @@
-import { wsUrl } from './apiBase';
+import { wsUrl } from '../../shared/apiBase';
 import { bindRoomTransport, isKnocking, STUDY_STYLES, useRoomStore, type ClientEvent, type CompletedTodo, type Player } from './roomStore';
 
 type IncomingPlayer = Omit<Player, 'jumpStartedAt'> & { jumpStartedAt?: number | null };
