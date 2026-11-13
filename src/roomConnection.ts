@@ -1,3 +1,4 @@
+import { wsUrl } from './apiBase';
 import { bindRoomTransport, isKnocking, STUDY_STYLES, useRoomStore, type ClientEvent, type CompletedTodo, type Player } from './roomStore';
 
 type IncomingPlayer = Omit<Player, 'jumpStartedAt'> & { jumpStartedAt?: number | null };
@@ -73,8 +74,7 @@ export function connectRoom(name: string) {
     if (disposed) return;
     receivedWelcome = false;
     useRoomStore.getState().setConnection('connecting');
-    const scheme = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const current = new WebSocket(scheme + '//' + location.host + '/ws/study-room');
+    const current = new WebSocket(wsUrl('/ws/study-room'));
     socket = current;
     current.onopen = () => {
       if (disposed || current !== socket) return;
