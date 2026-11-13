@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { ArrowRight, CircleAlert, Coffee, Eye, EyeOff, LockKeyhole, Mail, UserRound } from 'lucide-react';
-import { apiUrl } from './apiBase';
+import { apiClient } from './apiClient';
 import { BearMark } from './BearMark';
 import { authJsonRequest, readLoginResponse, readSignupResponse, type AuthSession } from './authApi';
 import './auth.css';
@@ -53,18 +53,12 @@ export function AuthPage({ notice, onLogin, onDemo }: AuthPageProps) {
     setPending(true);
     try {
       if (signingUp) {
-        const request = fetch(apiUrl('/api/v1/auth/signup'), {
-          ...authJsonRequest({ email, password, nickname }),
-          method: 'POST',
-        });
+        const request = apiClient.post('/api/v1/auth/signup', authJsonRequest({ email, password, nickname }));
         await readSignupResponse(request);
         changeMode('login');
         setStatus('가입이 완료됐어요. 이제 로그인해 주세요.');
       } else {
-        const request = fetch(apiUrl('/api/v1/auth/login'), {
-          ...authJsonRequest({ email, password }),
-          method: 'POST',
-        });
+        const request = apiClient.post('/api/v1/auth/login', authJsonRequest({ email, password }));
         onLogin(await readLoginResponse(request));
       }
     } catch (cause) {
